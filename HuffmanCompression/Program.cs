@@ -6,7 +6,8 @@ namespace HuffmanCompression
     {
         static void Main(string[] args)
         {
-            
+            var archiver = new Archiver();
+            archiver.ShowMenu();
         }
     }
 }
