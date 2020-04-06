@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using HuffmanCompression.Readers;
+using HuffmanCompression.TextProcessors;
 using HuffmanCompression.Writers;
 using StringWriter = HuffmanCompression.Writers.StringWriter;
 
@@ -42,7 +44,19 @@ namespace HuffmanCompression
         
         private Tuple<byte[], string> GetCompressedTextAndCodes(string filePath)
         {
-            throw new NotImplementedException();
+            var reader = new TxtReader();
+            var preprocessor = new HuffmanPreprocessor();
+            var compressor = new HuffmanCompressor();
+            var fileContent = reader.ReadFile(filePath, Encoding.UTF8);
+            var charsCount = CharCounter.GetSymbolsCount(fileContent);
+            var sortedChars = charsCount.OrderBy(pair => pair.Value).ToDictionary(pair => pair.Key, pair => pair.Value);
+            var nodeList = preprocessor.GetNodeList(sortedChars);
+            var tree = preprocessor.GetHuffmanTree(nodeList);
+            var codes = preprocessor.GetCharCodes(tree);
+            var compressedText = compressor.GetCompressedText(fileContent, codes);
+            codes.Add(compressedText.Length.ToString(), new byte[0]);
+            var codesText = DictionaryConverter.ConvertToString(codes);
+            return new Tuple<byte[], string>(compressedText, codesText);
         }
         
 
