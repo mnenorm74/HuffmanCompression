@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace HuffmanCompression
+﻿namespace HuffmanCompression
 {
     class Program
     {

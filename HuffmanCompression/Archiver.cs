@@ -1,4 +1,9 @@
 ﻿using System;
+using System.IO;
+using System.Text;
+using HuffmanCompression.Readers;
+using HuffmanCompression.Writers;
+using StringWriter = HuffmanCompression.Writers.StringWriter;
 
 namespace HuffmanCompression
 {
@@ -24,6 +29,18 @@ namespace HuffmanCompression
         }
 
         private void Compress()
+        {
+            var byteWriter = new ByteWriter();
+            Console.Write("Введите путь файла для архивации: ");
+            var filePath = Console.ReadLine();
+            var compressedResult = GetCompressedTextAndCodes(filePath);
+            var fileName = Path.GetFileNameWithoutExtension(filePath);
+            byteWriter.WriteToFile(filePath.Replace(fileName, $@"{fileName}Compressed"), compressedResult.Item1);
+            StringWriter.WriteToFile(filePath.Replace(fileName, $@"{fileName}Keys"), compressedResult.Item2);
+            Console.WriteLine("Файлы сохранены успешно!");
+        }
+        
+        private Tuple<byte[], string> GetCompressedTextAndCodes(string filePath)
         {
             throw new NotImplementedException();
         }
