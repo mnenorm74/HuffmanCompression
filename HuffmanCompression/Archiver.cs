@@ -59,10 +59,29 @@ namespace HuffmanCompression
             return new Tuple<byte[], string>(compressedText, codesText);
         }
         
-
         private void Decompress()
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Введите путь файла для дезархивации: ");
+            var compressedFilePath = Console.ReadLine();
+            var fileName = Path.GetFileNameWithoutExtension(compressedFilePath);
+            Console.WriteLine("Введите путь файла c кодами для декодирования: ");
+            var compressedFileKeysPath = Console.ReadLine();
+            var decompressedText = GetDecompressedText(compressedFilePath, compressedFileKeysPath);
+            StringWriter.WriteToFile(compressedFilePath.Replace(fileName, $@"{fileName}Decompressed"), decompressedText);
+            Console.WriteLine("Файлы сохранены успешно!");
+        }
+
+        private string GetDecompressedText(string compressedFilePath, string compressedFileKeysPath)
+        {
+            var reader = new TxtReader();
+            var compressor = new HuffmanCompressor();
+            var byteReader = new ByteReader();
+            var byteContent = byteReader.ReadFile(compressedFilePath);
+            var bytes = ByteExtractor.GetBytes(byteContent);
+            var codesString = reader.ReadFile(compressedFileKeysPath, Encoding.UTF8);
+            var codesToDecoding = DictionaryConverter.ConvertFromString(codesString);
+            var decompressedText = compressor.Decompress(bytes, codesToDecoding);
+            return decompressedText;
         }
     }
 }
